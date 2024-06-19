@@ -70,6 +70,7 @@ const Home: NextPage = () => {
   async function handleSecretFormSubmit(
     secretName: string,
     secretValue: string,
+    partyName: string,
     permissionedUserIdForRetrieveSecret: string | null,
     permissionedUserIdForUpdateSecret: string | null,
     permissionedUserIdForDeleteSecret: string | null,
@@ -220,6 +221,7 @@ const Home: NextPage = () => {
                       ) : (
                         <SecretForm
                           secretName={storedSecretName}
+                          partyName=""
                           onSubmit={handleSecretFormSubmit}
                           secretType="text"
                           isLoading={false}

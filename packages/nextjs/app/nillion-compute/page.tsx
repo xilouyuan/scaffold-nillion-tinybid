@@ -28,16 +28,18 @@ const Home: NextPage = () => {
   const [nillion, setNillion] = useState<any>(null);
   const [nillionClient, setNillionClient] = useState<any>(null);
 
-  const [programName] = useState<string>("addition_simple");
+  const [programName] = useState<string>("bidder");
   const [programId, setProgramId] = useState<string | null>(null);
   const [computeResult, setComputeResult] = useState<string | null>(null);
 
   const [storedSecretsNameToStoreId, setStoredSecretsNameToStoreId] = useState<StringObject>({
-    my_int1: null,
-    my_int2: null,
+    bidder0: null,
+    bidder1: null,
+    bidder2: null,
+    bidder3: null,
   });
-  const [parties] = useState<string[]>(["Party1"]);
-  const [outputs] = useState<string[]>(["my_output"]);
+  const [parties] = useState<string[]>(["bidder0", "bidder1", "bidder2", "bidder3"]);
+  const [outputs] = useState<string[]>(["winner_price"]);
 
   // connect to snap
   async function handleConnectToSnap() {
@@ -95,13 +97,13 @@ const Home: NextPage = () => {
   async function handleSecretFormSubmit(
     secretName: string,
     secretValue: string,
+    partyName: string,
     permissionedUserIdForRetrieveSecret: string | null,
     permissionedUserIdForUpdateSecret: string | null,
     permissionedUserIdForDeleteSecret: string | null,
     permissionedUserIdForComputeSecret: string | null,
   ) {
     if (programId) {
-      const partyName = parties[0];
       await storeSecretsInteger(
         nillion,
         nillionClient,
@@ -125,9 +127,14 @@ const Home: NextPage = () => {
   // compute on secrets
   async function handleCompute() {
     if (programId) {
-      await compute(nillion, nillionClient, Object.values(storedSecretsNameToStoreId), programId, outputs[0]).then(
-        result => setComputeResult(result),
-      );
+      await compute(
+        nillion,
+        nillionClient,
+        Object.values(storedSecretsNameToStoreId),
+        programId,
+        parties,
+        outputs[0],
+      ).then(result => setComputeResult(result));
     }
   }
 
@@ -218,7 +225,7 @@ const Home: NextPage = () => {
                   </h1>
 
                   <div className="flex flex-row w-full justify-between items-center my-10 mx-10">
-                    {Object.keys(storedSecretsNameToStoreId).map(key => (
+                    {Object.keys(storedSecretsNameToStoreId).map((key, index) => (
                       <div className="flex-1 px-2" key={key}>
                         {!!storedSecretsNameToStoreId[key] && userKey ? (
                           <>
@@ -238,6 +245,7 @@ const Home: NextPage = () => {
                         ) : (
                           <SecretForm
                             secretName={key}
+                            partyName={parties[index]}
                             onSubmit={handleSecretFormSubmit}
                             isDisabled={!programId}
                             secretType="number"

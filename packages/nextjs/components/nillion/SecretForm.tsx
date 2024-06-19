@@ -4,12 +4,14 @@ interface SecretFormProps {
   onSubmit: (
     secretName: string,
     secret: string,
+    partyName: string,
     permissionedUserIdForRetrieveSecret: string | null,
     permissionedUserIdForUpdateSecret: string | null,
     permissionedUserIdForDeleteSecret: string | null,
     permissionedUserIdForComputeSecret: string | null,
   ) => void;
   secretName: string;
+  partyName: string;
   isDisabled?: boolean;
   isLoading?: boolean;
   secretType: "text" | "number"; // text for SecretBlob, number for SecretInteger
@@ -21,6 +23,7 @@ interface SecretFormProps {
 const SecretForm: React.FC<SecretFormProps> = ({
   onSubmit,
   secretName,
+  partyName,
   isDisabled = false,
   isLoading = false,
   customSecretName = false,
@@ -42,6 +45,7 @@ const SecretForm: React.FC<SecretFormProps> = ({
     onSubmit(
       secretNameFromForm,
       secret,
+      partyName,
       permissionedUserIdForRetrieveSecret,
       permissionedUserIdForUpdateSecret,
       permissionedUserIdForDeleteSecret,
