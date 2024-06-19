@@ -30,7 +30,8 @@ const Home: NextPage = () => {
 
   const [programName] = useState<string>("bidder");
   const [programId, setProgramId] = useState<string | null>(null);
-  const [computeResult, setComputeResult] = useState<string | null>(null);
+  const [winners, setWinners] = useState<string[] | null>([]);
+  const [winnerPrice, setWinnerPrice] = useState<string | null>(null);
 
   const [storedSecretsNameToStoreId, setStoredSecretsNameToStoreId] = useState<StringObject>({
     bidder0: null,
@@ -127,14 +128,21 @@ const Home: NextPage = () => {
   // compute on secrets
   async function handleCompute() {
     if (programId) {
-      await compute(
+      const result = await compute(
         nillion,
         nillionClient,
         Object.values(storedSecretsNameToStoreId),
         programId,
         parties,
-        outputs[0],
-      ).then(result => setComputeResult(result));
+      );
+      setWinnerPrice(result.winner_price.toString());
+      const winnersArray: string[] = [];
+      for (const key in result) {
+        if (result[key] === 1n) {
+          winnersArray.push(key.toString());
+        }
+      }
+      setWinners(winnersArray);
     }
   }
 
@@ -260,7 +268,7 @@ const Home: NextPage = () => {
                   <h1 className="text-xl">
                     Step 3: Perform blind computation with stored secrets in the {programName} program
                   </h1>
-                  {!computeResult && (
+                  {!winnerPrice && (
                     <button
                       className="btn btn-sm btn-primary mt-4"
                       onClick={handleCompute}
@@ -269,7 +277,12 @@ const Home: NextPage = () => {
                       Compute on {programName}
                     </button>
                   )}
-                  {computeResult && <p>✅ Compute result: {computeResult}</p>}
+                  {winnerPrice && (
+                    <p>
+                      ✅ Compute result: Congratulations. The Final price is {winnerPrice}, And the final winner is{" "}
+                      {winners?.join(",")}
+                    </p>
+                  )}
                 </div>
               </div>
             )}

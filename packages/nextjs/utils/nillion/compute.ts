@@ -11,10 +11,9 @@ export async function compute(
   store_ids: (string | null)[],
   program_id: string,
   partyNames: string[],
-  outputName: string,
   computeTimeSecrets: JsInput[] = [],
   publicVariables: JsInput[] = [],
-): Promise<string> {
+): Promise<{ winner_price: bigint; [key: string]: bigint }> {
   try {
     // create program bindings with the program id
     const program_bindings = new nillion.ProgramBindings(program_id);
@@ -56,11 +55,10 @@ export async function compute(
     );
 
     const compute_result = await nillionClient.compute_result(compute_result_uuid);
-    const result = compute_result[outputName].toString();
-    console.log(compute_result);
-    return result;
+    // const result = compute_result[outputName].toString();
+    return compute_result;
   } catch (error: any) {
     console.log("error", error);
-    return "error";
+    return { winner_price: -1n };
   }
 }
